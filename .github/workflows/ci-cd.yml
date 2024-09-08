@@ -20,9 +20,9 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: SSH into server and deploy
         run: |
-          ssh nghiemxuan@${{ secrets.SERVER_HOST }}
-          cd KAFKA_ELASTIC_SEARCH_MS
-          git pull origin kafka
+          ssh -o StrictHostKeyChecking=no -T nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd KAFKA_ELASTIC_SEARCH_MS
+            git pull origin kafka
       - name: Setup docker
         run: |
           docker-compose -f broker/docker-compose.yml up --build -d
