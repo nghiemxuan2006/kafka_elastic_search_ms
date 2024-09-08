@@ -8,7 +8,7 @@ on:
 
 jobs:
   build: # Name of the job
-    runs-on: [self-hosted, linux, x64] # Operating system to run the job on
+    runs-on: [self-hosted, Linux, X64] # Operating system to run the job on
 
     steps: # Steps to run in the job
       - name: Checkout repository # Name of the step
