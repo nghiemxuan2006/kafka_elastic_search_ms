@@ -22,6 +22,7 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }} \
           ls -l &&\
+          pwd && \
           echo "Connected to server" && \
           cd ~/kafka_elastic_search_ms && git pull origin kafka && \
           echo "Pulled latest changes from the kafka branch" && \
