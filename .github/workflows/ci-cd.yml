@@ -23,7 +23,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }} \
           ls -l &&\
           echo "Connected to server" && \
-          cd home/nghiemxuan/kafka_elastic_search_ms && git pull origin kafka && \
+          cd ~/kafka_elastic_search_ms && git pull origin kafka && \
           echo "Pulled latest changes from the kafka branch" && \
           sudo docker-compose -f broker/docker-compose.yml up --build -d && \
           sudo docker-compose -f db/docker-compose.yml up --build -d
