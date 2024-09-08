@@ -8,23 +8,16 @@ on:
 
 jobs:
   build: # Name of the job
-    runs-on: ubuntu-latest # Operating system to run the job on
+    runs-on: [self-hosted, linux, x64] # Operating system to run the job on
 
     steps: # Steps to run in the job
       - name: Checkout repository # Name of the step
         uses: actions/checkout@v2 # Use the checkout action
 
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: SSH into server and deploy
+      - name: Run docker
         run: |
-          ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }} \
           ls -l &&\
           pwd && \
-          echo "Connected to server" && \
-          git pull origin kafka && \
           echo "Pulled latest changes from the kafka branch" && \
           sudo docker-compose -f broker/docker-compose.yml up --build -d && \
           sudo docker-compose -f db/docker-compose.yml up --build -d
