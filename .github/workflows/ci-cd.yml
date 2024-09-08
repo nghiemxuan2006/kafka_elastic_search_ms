@@ -1,18 +1,29 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
-on: [push]
+name: Deploy Backend to Server
+
+# Triggers the workflow on push to the main branch
+on:
+  push:
+    branches:
+      - kafka
+
 jobs:
-  Explore-GitHub-Actions:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+  build: # Name of the job
+    runs-on: ubuntu-latest # Operating system to run the job on
+
+    steps: # Steps to run in the job
+      - name: Checkout repository # Name of the step
+        uses: actions/checkout@v2 # Use the checkout action
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: SSH into server and deploy
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          ssh nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
+          cd KAFKA_ELASTIC_SEARCH_MS
+          git pull origin kafka
+      - name: Setup docker
+        run: |
+          docker-compose -f broker/docker-compose.yml up --build -d
+          docker-compose -f db/docker-compose.yml up --build -d
