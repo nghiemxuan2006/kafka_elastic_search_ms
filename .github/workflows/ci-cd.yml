@@ -20,8 +20,9 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: SSH into server and deploy
         run: |
-          ssh -o StrictHostKeyChecking=no -T nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
-            cd KAFKA_ELASTIC_SEARCH_MS << 'EOF'
-            git pull origin kafka << 'EOF'
-            docker-compose -f broker/docker-compose.yml up --build -d << 'EOF'
-            docker-compose -f db/docker-compose.yml up --build -d << 'EOF'
+          ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }} \
+          echo "Connected to server" && \
+          "cd KAFKA_ELASTIC_SEARCH_MS && git pull origin kafka && \
+          sudo docker-compose -f broker/docker-compose.yml up --build -d && \
+          sudo docker-compose -f db/docker-compose.yml up --build -d"
+  
