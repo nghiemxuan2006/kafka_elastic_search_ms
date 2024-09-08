@@ -22,8 +22,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -T nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
             cd KAFKA_ELASTIC_SEARCH_MS << 'EOF'
-            git pull origin kafka
-      - name: Setup docker
-        run: |
-          docker-compose -f broker/docker-compose.yml up --build -d
-          docker-compose -f db/docker-compose.yml up --build -d
+            git pull origin kafka << 'EOF'
+            docker-compose -f broker/docker-compose.yml up --build -d << 'EOF'
+            docker-compose -f db/docker-compose.yml up --build -d << 'EOF'
