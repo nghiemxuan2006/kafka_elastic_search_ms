@@ -67,7 +67,7 @@ services:
 
   order_server:
     build: 
-      context: /order_service
+      context: ./order_service
     ports:
       - "9002:9002"
     depends_on:
@@ -76,7 +76,7 @@ services:
       - order-network
   catlog_server:
     build: 
-      context: /catalog_service
+      context: ./catalog_service
     ports:
       - "9001:9001"
     depends_on:
