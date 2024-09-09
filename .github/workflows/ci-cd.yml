@@ -13,6 +13,8 @@ jobs:
     steps: # Steps to run in the job
       - name: Checkout repository # Name of the step
         uses: actions/checkout@v2 # Use the checkout action
+        with:
+          fetch-depth: 0
 
       - name: Run docker
         run: |
