@@ -1,0 +1,91 @@
+version: "3"
+
+services:
+  catalog_db_server:
+    image: "postgres:14.0"
+    ports:
+      - "5432:5432"
+    networks:
+      - catalog-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U catalog_db"]
+      interval: 30s  # Time between each health check
+      timeout: 10s   # Maximum time to wait for a response
+      retries: 5     # Retry before considering the container unhealthy
+      start_period: 30s  # Time to wait before starting health checks
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: catalog_db
+      POSTGRES_PASSWORD: catalog_db_password
+      POSTGRES_DB: catalog_service
+    volumes:
+      - ./db/db-data/catalog_db_server/:/var/lib/postgresql/data
+  order_db_server:
+    image: "postgres:14.0"
+    ports:
+      - "5433:5432"
+    networks:
+      - order-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order_db"]
+      interval: 30s  # Time between each health check
+      timeout: 10s   # Maximum time to wait for a response
+      retries: 5     # Retry before considering the container unhealthy
+      start_period: 30s  # Time to wait before starting health checks
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: order_db
+      POSTGRES_PASSWORD: order_db_password
+      POSTGRES_DB: order_service
+    volumes:
+      - ./db/db-data/order_db_server/:/var/lib/postgresql/data
+  
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092"
+      # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      # KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1  
+    ports:
+      - "9092:9092"
+
+  order_server:
+    build: 
+      context: /order_service
+    ports:
+      - "9002:9002"
+    depends_on:
+      - order_db_server
+    networks:
+      - order-network
+  catlog_server:
+    build: 
+      context: /catalog_service
+    ports:
+      - "9001:9001"
+    depends_on:
+      - catalog_db_server
+    networks:
+      - catalog-network
+networks:
+  catalog-network:
+  order-network:
+    
+
+    

@@ -16,9 +16,6 @@ jobs:
 
       - name: Run docker
         run: |
-          ls -l &&\
-          pwd && \
           echo "Pulled latest changes from the kafka branch" && \
-          sudo docker-compose -f broker/docker-compose.yml up --build -d && \
-          sudo docker-compose -f db/docker-compose.yml up --build -d
+          sudo docker-compose up --build -d
   
