@@ -8,7 +8,7 @@ services:
     networks:
       - catalog-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U catalog_db"]
+      test: ["CMD-SHELL", "pg_isready -U catalog_service"]
       interval: 30s  # Time between each health check
       timeout: 10s   # Maximum time to wait for a response
       retries: 5     # Retry before considering the container unhealthy
@@ -29,7 +29,7 @@ services:
     networks:
       - order-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U order_db"]
+      test: ["CMD-SHELL", "pg_isready -U order_service"]
       interval: 30s  # Time between each health check
       timeout: 10s   # Maximum time to wait for a response
       retries: 5     # Retry before considering the container unhealthy
@@ -50,10 +50,14 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
   kafka:
     image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -64,6 +68,12 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1  
     ports:
       - "9092:9092"
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   order_server:
     build: 
@@ -71,7 +81,12 @@ services:
     ports:
       - "9002:9002"
     depends_on:
-      - order_db_server
+      order_db_server:
+        condition: service_healthy
+      kafka:
+          condition: service_healthy
+      zookeeper:
+        condition: service_healthy
     networks:
       - order-network
   catlog_server:
@@ -80,7 +95,12 @@ services:
     ports:
       - "9001:9001"
     depends_on:
-      - catalog_db_server
+      catalog_db_server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      zookeeper:
+        condition: service_healthy
     networks:
       - catalog-network
 networks:

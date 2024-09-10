@@ -14,7 +14,7 @@ export const ExpressApp = async () => {
   // first step: connect to producer and consumer
   const producer = await MessageBroker.connectProducer<Producer>();
   producer.on("producer.connect", () => {
-    console
+    console.log("producer connected");
   })
 
   const consumer = await MessageBroker.connectConsumer<Consumer>();
