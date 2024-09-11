@@ -19,7 +19,7 @@ jobs:
       - name: Run docker
         run: |
           echo "Pulled latest changes from the kafka branch" && \
-          sudo docker-compose up --build -d 
+          sudo docker-compose up --build -d
         # run: |
         #   echo "Pulled latest changes from the kafka branch"
   
