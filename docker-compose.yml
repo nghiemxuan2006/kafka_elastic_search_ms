@@ -19,7 +19,7 @@ services:
     environment:
       POSTGRES_USER: catalog_db
       POSTGRES_PASSWORD: catalog_db_password
-      POSTGRES_DB: catalog_service 
+      POSTGRES_DB: catalog_service
     volumes:
       - catalog-data:/var/lib/postgresql/data
   order_db_server:
