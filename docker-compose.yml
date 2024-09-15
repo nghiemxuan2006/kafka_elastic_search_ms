@@ -87,6 +87,8 @@ services:
       context: ./order_service
     ports:
       - "9002:9002"
+    env_file:
+      - ./order_service/.env
     depends_on:
       order_db_server:
         condition: service_healthy
