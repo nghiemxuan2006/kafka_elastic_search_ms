@@ -39,10 +39,19 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    - name: SSH into server and deploy
-      run: |
-          ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }}
-          pwd
+    # - name: SSH into server and deploy
+    #   run: |
+    #       ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }}
+    #       pwd
+    #       cd ~/kafka_elastic_search_ms
+    #       git pull origin kafka
+    - name: Set up SSH
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}         # Add this secret in GitHub with your server IP
+        username: nghiemxuan     # Add this secret with your SSH username
+        key: ${{ secrets.SSH_PRIVATE_KEY }}   # The SSH private key secret
+        script: |
           cd ~/kafka_elastic_search_ms
           git pull origin kafka
     - name: Run docker
