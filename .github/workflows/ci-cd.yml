@@ -42,7 +42,8 @@ jobs:
     - name: SSH into server and deploy
       run: |
           ssh -o StrictHostKeyChecking=no nghiemxuan@${{ secrets.SERVER_HOST }}
-          cd KAFKA_ELASTIC_SEARCH_MS
+          pwd
+          cd ~/kafka_elastic_search_ms
           git pull origin kafka
     - name: Run docker
       run: |
