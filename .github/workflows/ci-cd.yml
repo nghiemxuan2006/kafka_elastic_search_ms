@@ -1,25 +1,52 @@
+# name: Deploy Backend to Server
+
+# # Triggers the workflow on push to the main branch
+# on:
+#   push:
+#     branches:
+#       - kafka
+
+# jobs:
+#   build: # Name of the job
+#     runs-on: [self-hosted, Linux, X64] # Operating system to run the job on
+
+#     steps: # Steps to run in the job
+#       - name: Checkout repository # Name of the step
+#         uses: actions/checkout@v2 # Use the checkout action
+#         with:
+#           fetch-depth: 0
+
+#       - name: Run docker
+#         run: |
+#           echo "Pulled latest changes from the kafka branch" && \
+#           sudo docker-compose up --build -d
+#         # run: |
+#         #   echo "Pulled latest changes from the kafka branch"
+  
+
 name: Deploy Backend to Server
 
-# Triggers the workflow on push to the main branch
 on:
   push:
     branches:
       - kafka
 
 jobs:
-  build: # Name of the job
-    runs-on: [self-hosted, Linux, X64] # Operating system to run the job on
-
-    steps: # Steps to run in the job
-      - name: Checkout repository # Name of the step
-        uses: actions/checkout@v2 # Use the checkout action
-        with:
-          fetch-depth: 0
-
-      - name: Run docker
-        run: |
-          echo "Pulled latest changes from the kafka branch" && \
-          sudo docker-compose up --build -d
-        # run: |
-        #   echo "Pulled latest changes from the kafka branch"
-  
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Deploy to Server via SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: SSH into server and deploy
+      run: |
+          ssh nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
+          cd KAFKA_ELASTIC_SEARCH_MS
+          git pull origin kafka
+    - name: Run docker
+      run: |
+        echo "Pulled latest changes from the kafka branch" && \
+        sudo docker-compose up --build -d
+      # run: |
+      #   echo "Pulled latest changes from the kafka branch"
