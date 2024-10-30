@@ -41,7 +41,7 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: SSH into server and deploy
       run: |
-          ssh nghiemxuan@${{ secrets.SERVER_HOST }} << 'EOF'
+          ssh nghiemxuan@${{ secrets.SERVER_HOST }}
           cd KAFKA_ELASTIC_SEARCH_MS
           git pull origin kafka
     - name: Run docker
