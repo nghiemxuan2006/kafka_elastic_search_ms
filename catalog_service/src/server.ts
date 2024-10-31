@@ -15,5 +15,5 @@ export const StartServer = async () => {
 };
 
 StartServer().then(() => {
-  logger.info("server is up");
+  logger.info("server is up and running");
 });
