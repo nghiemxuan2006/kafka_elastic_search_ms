@@ -8,4 +8,5 @@ RUN yarn
 
 COPY . .
 
-CMD ["yarn", "dev"]
+# CMD ["yarn", "dev"]
+CMD ["sh", "-c", "npx prisma migrate dev && yarn dev"]

@@ -102,6 +102,8 @@ services:
       context: ./catalog_service
     ports:
       - "9001:9001"
+    env_file:
+      - ./catalog_service/.env.dev
     depends_on:
       catalog_db_server:
         condition: service_healthy
